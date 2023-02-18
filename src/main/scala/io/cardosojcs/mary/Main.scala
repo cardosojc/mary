@@ -3,5 +3,5 @@ package io.cardosojcs.mary
 import cats.effect.{IO, IOApp}
 
 object Main extends IOApp.Simple {
-  val run = MaryServer.run[IO]
+  val run: IO[Nothing] = MaryServer.run
 }

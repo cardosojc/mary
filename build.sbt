@@ -3,6 +3,7 @@ val CirceVersion = "0.14.4"
 val MunitVersion = "0.7.29"
 val LogbackVersion = "1.4.5"
 val MunitCatsEffectVersion = "1.0.7"
+val Redis4catsVersion = "1.4.0"
 
 lazy val root = (project in file("."))
   .settings(
@@ -16,13 +17,25 @@ lazy val root = (project in file("."))
       "org.http4s"      %% "http4s-circe"        % Http4sVersion,
       "org.http4s"      %% "http4s-dsl"          % Http4sVersion,
       "io.circe"        %% "circe-generic"       % CirceVersion,
+      "dev.profunktor"  %% "redis4cats-effects"  % Redis4catsVersion,
       "org.scalameta"   %% "munit"               % MunitVersion           % Test,
       "org.typelevel"   %% "munit-cats-effect-3" % MunitCatsEffectVersion % Test,
-      //"ch.qos.logback"  %  "logback-classic"     % LogbackVersion         % Runtime,
+      "ch.qos.logback"  %  "logback-classic"     % LogbackVersion         % Runtime,
     ),
     addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.13.2" cross CrossVersion.full),
     addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1"),
     testFrameworks += new TestFramework("munit.Framework")
+
   )
+
+
+
+assembly / assemblyMergeStrategy := {
+  case x if x.endsWith("module-info.class") => MergeStrategy.discard
+  case y if y.contains("io.netty.versions.properties") => MergeStrategy.concat
+  case x =>
+    val oldStrategy = (assembly / assemblyMergeStrategy).value
+    oldStrategy(x)
+}
 
 assembly / assemblyJarName  := "mary.jar"
