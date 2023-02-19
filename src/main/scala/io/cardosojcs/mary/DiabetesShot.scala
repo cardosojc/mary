@@ -44,7 +44,7 @@ object DiabetesShot {
       case Some("direita-cima") => Shot("direita-baixo")
       case Some("direita-baixo") => Shot("esquerda-baixo")
       case Some("esquerda-baixo") => Shot("esquerda-cime")
-      case Some(_) => Shot("esquerda-cime")
+      case Some(_) => Shot("esquerda-cima")
       case None => Shot("esquerda-cima")
     }
     IO(nextShot)
