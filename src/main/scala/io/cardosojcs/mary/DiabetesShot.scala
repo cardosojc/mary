@@ -43,7 +43,7 @@ object DiabetesShot {
       case Some("esquerda-cima") => Shot("direita-cima")
       case Some("direita-cima") => Shot("direita-baixo")
       case Some("direita-baixo") => Shot("esquerda-baixo")
-      case Some("esquerda-baixo") => Shot("esquerda-cime")
+      case Some("esquerda-baixo") => Shot("esquerda-cima")
       case Some(_) => Shot("esquerda-cima")
       case None => Shot("esquerda-cima")
     }
