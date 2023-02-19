@@ -28,31 +28,25 @@ object DiabetesShot {
 
   def impl: DiabetesShot = new DiabetesShot {
     def get: IO[DiabetesShot.Shot] = {
-      val result = Redis[IO].utf8("redis://default:48a16b0d4c38430f85c46db8e744194d@fly-marydb.upstash.io").use { redis =>
+      Redis[IO].utf8(sys.env.getOrElse("REDIS_URL", "redis://localhost")).use { redis =>
         for {
           x <- redis.get("lastshot")
-        } yield x match {
-          case Some(value) =>
-            val next = calculateNextShot(value)
-            redis.set("lastshot", next.place)
-            next
-          case None =>
-            val next = "esquerda-cima"
-            redis.set("lastshot", next)
-            Shot(next)
-        }
+          next <- calculateNextShot(x)
+          _ <- redis.set("lastshot", next.place)
+        } yield next
       }
-      result
     }
   }
 
-  private def calculateNextShot(value: String) = {
-    value match {
-      case "esquerda-cima" => Shot("direita-cima")
-      case "direita-cima" => Shot("direita-baixo")
-      case "direita-baixo" => Shot("esquerda-baixo")
-      case "esquerda-baixo" => Shot("esquerda-cime")
-      case _ => Shot("esquerda-cima")
+  private def calculateNextShot(value: Option[String]) = {
+    val nextShot = value match {
+      case Some("esquerda-cima") => Shot("direita-cima")
+      case Some("direita-cima") => Shot("direita-baixo")
+      case Some("direita-baixo") => Shot("esquerda-baixo")
+      case Some("esquerda-baixo") => Shot("esquerda-cime")
+      case Some(_) => Shot("esquerda-cime")
+      case None => Shot("esquerda-cima")
     }
+    IO(nextShot)
   }
 }
