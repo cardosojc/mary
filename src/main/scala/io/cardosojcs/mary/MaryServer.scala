@@ -11,8 +11,8 @@ object MaryServer {
 
   def run: IO[Nothing] = {
     for {
-      _ <- EmberClientBuilder.default[IO].build
-      shotAlg = DiabetesShot.impl
+      client <- EmberClientBuilder.default[IO].build
+      shotAlg = DiabetesShot.impl(client)
 
       // Combine Service Routes into an HttpApp.
       // Can also be done via a Router if you
